@@ -4,7 +4,8 @@ import pytest
 import pytz
 from django.utils.timezone import make_aware
 
-from restdoctor.rest_framework.fields import DateTimeField
+from restdoctor.rest_framework.fields import DateTimeField, ModelFromUUIDField
+from tests.stubs.models import MyModel
 
 
 @pytest.mark.parametrize(
@@ -21,3 +22,12 @@ def test_datetime_field_to_representation(
     datetime_obj, expected_string_representation,
 ):
     assert DateTimeField().to_representation(datetime_obj) == expected_string_representation
+
+
+@pytest.mark.django_db
+def test_model_from_uuid_field_to_representation(
+    my_model,
+):
+    queryset = MyModel.objects.all()
+
+    assert ModelFromUUIDField(queryset=queryset).to_representation(my_model.uuid) == my_model
